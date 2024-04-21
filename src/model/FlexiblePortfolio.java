@@ -15,7 +15,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static model.Manager.readXMLDocumentFromFile;
@@ -73,6 +75,48 @@ public class FlexiblePortfolio extends Portfolio implements FlexiblePortfolioInt
       count += 1;
     }
     return average / count;
+  }
+
+
+  public String rebalancePortfolio(String date, Map<String, Float> targetWeights) throws Exception {
+    float totalValue = 0;
+    Map<String, Float> currentValues = new HashMap<>();
+
+    // Calculate current values and total value of the portfolio
+    for (Stock stock : stocksList) {
+      float price = stock.getPriceOnDate(date);
+      float currentValue = price * stock.getQuantity();
+      currentValues.put(stock.getSymbol(), currentValue);
+      totalValue += currentValue;
+    }
+
+    // Calculate the desired value for each stock
+    Map<String, Float> desiredValues = new HashMap<>();
+    for (Map.Entry<String, Float> entry : targetWeights.entrySet()) {
+      desiredValues.put(entry.getKey(), totalValue * entry.getValue() / 100);
+    }
+
+    // Adjust stock quantities to achieve target distribution
+    for (Stock stock : stocksList) {
+      float currentStockValue = currentValues.get(stock.getSymbol());
+      float desiredStockValue = desiredValues.get(stock.getSymbol());
+      float price = stock.getPriceOnDate(date);
+
+      if (currentStockValue > desiredStockValue) {
+        // Need to sell stock
+        float excessValue = currentStockValue - desiredStockValue;
+        int sharesToSell = (int)(excessValue / price);
+        stock.transact(date, -sharesToSell);
+      } else if (currentStockValue < desiredStockValue) {
+        // Need to buy stock
+        float shortfallValue = desiredStockValue - currentStockValue;
+        int sharesToBuy = (int)(shortfallValue / price);
+        stock.transact(date, sharesToBuy);
+      }
+    }
+
+    save();  // Save changes to the XML file
+    return "Rebalancing completed.";
   }
 
   /**
