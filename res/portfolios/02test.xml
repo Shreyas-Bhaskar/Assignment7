@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<portfolio>
+    <stock id="AAPL">
+        <symbol>AAPL</symbol>
+        <transactDate>2024-01-02</transactDate>
+        <transactQuantity>100</transactQuantity>
+        <quantity>100</quantity>
+    </stock>
+    <stock id="GOOG">
+        <symbol>GOOG</symbol>
+        <transactDate>2024-01-02</transactDate>
+        <transactQuantity>100</transactQuantity>
+        <quantity>100</quantity>
+    </stock>
+</portfolio>
