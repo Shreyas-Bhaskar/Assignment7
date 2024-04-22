@@ -2,6 +2,7 @@ package model;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The MockPortfolio class implements {@link PortfolioInterface} and simulates
@@ -73,5 +74,10 @@ public class MockFlexiblePortfolio extends MockPortfolio implements FlexiblePort
   @Override
   public boolean checkStartDate(String date) {
     return false;
+  }
+
+  @Override
+  public void rebalance(String date, Map<String, Float> targetWeights) throws Exception {
+    log.append("Reached rebalance");
   }
 }

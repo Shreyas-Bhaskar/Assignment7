@@ -43,6 +43,13 @@ public class FlexibleManager extends Manager implements FlexibleManagerInterface
   }
 
   /**
+   * getter for the current portfolio.
+   */
+  public FlexiblePortfolio getCurrentPortfolio() {
+    return currentPortfolio;
+  }
+
+  /**
    * Adds a stock to the current portfolio. This method attempts to fetch stock data,
    * create a new stock instance, and add it to the portfolio if the provided symbol
    * and quantity are valid.

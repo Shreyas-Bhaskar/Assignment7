@@ -104,6 +104,9 @@ public class GUIController extends AbstractController implements ActionListener 
           try {
             model.createPortfolio(portfolioNameDAC);
             int amountDAC = Integer.parseInt(view.getAmounts("DAC"));
+            if (amountDAC < 0) {
+              throw new Exception("Illegal Amount");
+            }
             // try catch in create portfolio, invalid throws error
             List<String> symbols = view.getSymbols("DAC");
             List<String> dates = view.getDates("DAC");
@@ -142,7 +145,7 @@ public class GUIController extends AbstractController implements ActionListener 
           } catch (NumberFormatException msg) {
             view.displayMessage("Invalid Amount");
           } catch (Exception msg) {
-            view.displayMessage("Invalid Name");
+            view.displayMessage(msg.getMessage());
             view.removeFields();
           }
         }
@@ -157,7 +160,13 @@ public class GUIController extends AbstractController implements ActionListener 
           try {
             model.createPortfolio(portfolioNameStrat);
             int amountStrat = Integer.parseInt(view.getAmounts("Strat"));
+            if (amountStrat < 0) {
+              throw new Exception("Illegal Amount");
+            }
             int period = Integer.parseInt(view.getPeriod());
+            if (period < 1) {
+              throw new Exception("Illegal Period");
+            }
             // try catch in create portfolio, invalid throws error
             List<String> symbols = view.getSymbols("Strat");
             List<String> dates = view.getDates("Strat");
@@ -198,6 +207,7 @@ public class GUIController extends AbstractController implements ActionListener 
                     model.addStock(symbols.get(i), prices.get(i), dates.get(0));
                   }
                   model.savePortfolio();
+                  // model.getCurrentPortfolio().useStrategy();
                   view.displayMessage(portfolioNameStrat + " Portfolio Created");
                   view.removeFields();
                 } else {
@@ -215,7 +225,7 @@ public class GUIController extends AbstractController implements ActionListener 
           } catch (NumberFormatException msg) {
             view.displayMessage("Invalid Amount or Period");
           } catch (Exception msg) {
-            view.displayMessage("Invalid Name");
+            view.displayMessage(msg.getMessage());
             view.removeFields();
           }
         }
@@ -277,7 +287,9 @@ public class GUIController extends AbstractController implements ActionListener 
                                  List<String> dates, List<String> quantities) {
     try {
       for (String quantity : quantities) {
-        Integer.parseInt(quantity);
+        if (Integer.parseInt(quantity) < 0) {
+          return false;
+        }
       }
     } catch (NumberFormatException e) {
       return false;

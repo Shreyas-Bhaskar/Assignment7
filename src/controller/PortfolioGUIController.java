@@ -2,9 +2,16 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+import java.util.Map;
+import javax.swing.JTextField;
 import model.FlexiblePortfolioInterface;
 import model.StockInterface;
+import model.Strategy;
 import view.PortfolioGUIView;
 import view.StockGUIView;
 
@@ -63,7 +70,8 @@ public class PortfolioGUIController extends AbstractController implements Action
         } else if (checkDate(buyDate)) {
           try {
             int quantity = Integer.parseInt(stock);
-            view.displayMessage(portfolio.buyExisting(view.getStockSymbol() + 1, buyDate, quantity));
+            view.displayMessage(portfolio.buyExisting(view.getStockSymbol() + 1,
+                    buyDate, quantity));
           } catch (NumberFormatException msg) {
             view.displayMessage("Invalid Quantity");
           }
@@ -71,13 +79,35 @@ public class PortfolioGUIController extends AbstractController implements Action
           view.displayMessage("Enter Valid Date");
         }
         break;
+      case "Rebalance Portfolio":
+        date = view.getRebalanceDate();
+        if (!checkDate(date)) {
+          view.displayMessage("Enter a valid date in YYYY-MM-DD format");
+          return;
+        }
+        try {
+          Map<String, Float> targetWeights = new HashMap<>();
+          for (Map.Entry<String, JTextField> entry : view.getStockWeights().entrySet()) {
+            float weight = Float.parseFloat(entry.getValue().getText()); // Convert percentage to decimal
+            targetWeights.put(entry.getKey(), weight);
+          }
+           portfolio.rebalance(date, targetWeights);
+          view.displayMessage("successfully rebalanced portfolio");
+        } catch (NumberFormatException ex) {
+          view.displayMessage("Invalid weight format");
+        } catch (Exception ex) {
+          view.displayMessage("Failed to rebalance portfolio: " + ex.getMessage());
+        }
+        break;
+
       case "Sell Stock":
         if ("".equals(buyDate)) {
           view.displayMessage("Enter a Date");
         } else if (checkDate(buyDate)) {
           try {
             int quantity = Integer.parseInt(stock);
-            view.displayMessage(portfolio.sellExisting(view.getStockSymbol() + 1, buyDate, quantity));
+            view.displayMessage(portfolio.sellExisting(view.getStockSymbol() + 1,
+                    buyDate, quantity));
           } catch (NumberFormatException msg) {
             view.displayMessage("Invalid Quantity");
           }
@@ -117,8 +147,130 @@ public class PortfolioGUIController extends AbstractController implements Action
           throw new RuntimeException(ex);
         }
         break;
+      case "Save DAC Portfolio":
+        try {
+          int amountDAC = Integer.parseInt(view.getAmounts("DAC"));
+          if (amountDAC < 0) {
+            throw new Exception("Illegal Amount");
+          }
+          // try catch in create portfolio, invalid throws error
+          List<String> dates = view.getDates("DAC");
+          List<String> percentages = view.getPercents("DAC");
+          if (validateInputs(dates, percentages)) {
+            List<Integer> percents = new ArrayList<>();
+            for (String numPercent : percentages) {
+              percents.add(Integer.parseInt(numPercent));
+            }
+            if (percents.stream().reduce(0, Integer::sum) == 100) {
+              StringBuilder result = new StringBuilder();
+              for (int i = 0; i < percents.size(); i++) {
+                result.append(portfolio.buyExistingPrice(i, dates.get(i),
+                        (float) (amountDAC / 100) * Integer.parseInt(percentages.get(i))))
+                        .append("\n");
+              }
+              view.displayMessage(String.valueOf(result));
+              view.removeFields();
+            } else {
+              view.displayMessage("Percentages do not add upto 100");
+              view.removeFields();
+            }
+          } else {
+            view.displayMessage("Invalid Inputs in Stock Date or Percentage");
+            view.removeFields();
+          }
+        } catch (NumberFormatException msg) {
+          view.displayMessage("Invalid Amount");
+        } catch (Exception msg) {
+          view.displayMessage(msg.getMessage());
+          view.removeFields();
+        }
+        view.removeFields();
+        break;
+      case "Save Strategy Portfolio":
+        try {
+          int amountStrat = Integer.parseInt(view.getAmounts("Strat"));
+          if (amountStrat < 0) {
+            throw new Exception("Illegal Amount");
+          }
+          int period = Integer.parseInt(view.getPeriod());
+          if (period < 1) {
+            throw new Exception("Illegal Period");
+          }
+          // try catch in create portfolio, invalid throws error
+          List<String> dates = view.getDates("Strat");
+          List<String> percentages = view.getPercents("Strat");
+          List<String> date1 = new ArrayList<>();
+          date1.add(dates.get(0));
+          if (dates.get(1).equals("")) {
+            dates.set(1, "1");
+          } else {
+            SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
+            parser.setLenient(false);
+            try {
+              parser.parse(dates.get(1));
+            } catch (Exception msg) {
+              view.displayMessage("Invalid End Date");
+              view.removeFields();
+            }
+          }
+          if (validateInputs(date1, percentages)) {
+            List<Integer> percents = new ArrayList<>();
+            StringBuilder result = new StringBuilder();
+            for (String num1 : percentages) {
+              percents.add(Integer.parseInt(num1));
+            }
+            if (percents.stream().reduce(0, Integer::sum) == 100) {
+              List<Float> prices = new ArrayList<>();
+              for (int i = 0; i < percents.size(); i++) {
+                prices.add((float) (amountStrat / 100) * percents.get(i));
+              }
+              Strategy strategy = new Strategy(dates.get(0), dates.get(1), period,
+                      portfolio.listStocks(), prices);
+              String name = view.getName();
+              name = name.replace(name.substring(name.length() - 4), "");
+              strategy.saveStrategy(name);
+              for (int i = 0; i < percents.size(); i++) {
+                result.append(
+                portfolio.buyExistingPrice(i, dates.get(0), prices.get(i))).append("\n");
+              }
+              view.displayMessage(String.valueOf(result));
+              view.removeFields();
+            } else {
+              view.displayMessage("Percentages do not add upto 100");
+              view.removeFields();
+            }
+          } else {
+            view.displayMessage("Invalid Inputs in Stock Symbol, Date or Percentage");
+            view.removeFields();
+          }
+        } catch (NumberFormatException msg) {
+          view.displayMessage("Invalid Amount or Period");
+        } catch (Exception msg) {
+          view.displayMessage(msg.getMessage());
+          view.removeFields();
+        }
+        view.removeFields();
+        break;
       default:
         break;
     }
+  }
+
+  private boolean validateInputs(List<String> dates, List<String> quantities) {
+    try {
+      for (String quantity : quantities) {
+        if (Integer.parseInt(quantity) < 0) {
+          return false;
+        }
+      }
+    } catch (NumberFormatException e) {
+      return false;
+    }
+    for (String date : dates) {
+      if (!checkDate(date)) {
+        return false;
+      }
+    }
+    return true;
   }
 }

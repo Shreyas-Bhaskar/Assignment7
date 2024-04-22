@@ -1,12 +1,23 @@
 package view;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+
 
 /**
  * Represents the main graphical user interface (GUI) for this application.
@@ -114,8 +125,8 @@ public class GUIView extends JFrame implements GUIViewInterface {
     JScrollPane mainScrollPane2 = new JScrollPane(inputPanelDAC);
 
     inputPanelStrat = new JPanel();
-    inputPanelStrat.setBorder(BorderFactory.createTitledBorder
-            ("Create New Portfolio with Strategy"));
+    inputPanelStrat.setBorder(BorderFactory
+            .createTitledBorder("Create New Portfolio with Strategy"));
     inputPanelStrat.setLayout(new BoxLayout(inputPanelStrat, BoxLayout.Y_AXIS));
     JScrollPane mainScrollPane3 = new JScrollPane(inputPanelStrat);
 
@@ -297,7 +308,7 @@ public class GUIView extends JFrame implements GUIViewInterface {
    * @param type A string identifier to select the investment strategy type, expecting "DAC" for
    *            Dollar-Cost Averaging or another identifier for different strategies.
    * @return A list of strings, each representing the percentage (as entered by the user) to be
-   * allocated to each stock in the portfolio.
+   *         allocated to each stock in the portfolio.
    */
   public List<String> getPercents(String type) {
     List<String> percents = new ArrayList<>();
@@ -322,7 +333,7 @@ public class GUIView extends JFrame implements GUIViewInterface {
    * @param type A string identifier to select the investment strategy type, expecting "DAC" for
    *             Dollar-Cost Averaging or another identifier for different strategies.
    * @return A string representing the total amount to be invested as specified by the user for
-   * the selected investment strategy.
+   *         the selected investment strategy.
    */
   public String getAmounts(String type) {
     if ("DAC".equals(type)) {

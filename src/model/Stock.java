@@ -72,6 +72,13 @@ public class Stock implements StockInterface {
   }
 
   protected void transact(String date, float quantity) {
+    try{
+      if (this.getQuantityOnDate(date) + quantity < 0) {
+        throw new IllegalArgumentException("Insufficient quantity to sell");
+      }
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Insufficient quantity to sell");
+    }
     transactionQuantity.add(quantity);
     transactionDates.add(date);
   }
@@ -127,10 +134,10 @@ public class Stock implements StockInterface {
     return Float.parseFloat(getRow(date).get(4));
   }
 
-  protected int getQuantityOnDate(String date) throws Exception {
+  protected float getQuantityOnDate(String date) throws Exception {
     SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
     Date targetDate = parser.parse(date);
-    int totalQuantity = 0;
+    float totalQuantity = 0;
 
     for (int i = 0; i < transactionDates.size(); i++) {
       Date transactionDate = parser.parse(transactionDates.get(i));
@@ -330,6 +337,7 @@ public class Stock implements StockInterface {
   protected float getBuyPriceOnDate(String date) throws Exception {
     try {
       Scanner s = new Scanner(getData());
+      s.next();
       List<String> prevLine = Arrays.asList(s.next().split(","));
       List<String> line;
       while (s.hasNext()) {

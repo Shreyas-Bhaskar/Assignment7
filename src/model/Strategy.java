@@ -30,7 +30,8 @@ public class Strategy {
    * @param stocks    The list of stock symbols.
    * @param prices    The list of prices corresponding to each stock.
    */
-  public Strategy(String startDate, String endDate, int period, List<String> stocks, List<Float> prices) {
+  public Strategy(String startDate, String endDate, int period, List<String> stocks, List<Float>
+          prices) {
     this.startDate = startDate;
     this.endDate = endDate;
     this.period = period;

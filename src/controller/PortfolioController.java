@@ -35,7 +35,8 @@ public class PortfolioController extends AbstractController {
    * @param view      The view interface for user interaction and display.
    * @param input     The scanner for reading user input.
    */
-  protected PortfolioController(String name, FlexiblePortfolioInterface portfolio, FlexibleViewInterface view, Scanner input) {
+  protected PortfolioController(String name, FlexiblePortfolioInterface portfolio,
+                                FlexibleViewInterface view, Scanner input) {
     this.name = name;
     this.portfolio = portfolio;
     this.view = view;
@@ -130,7 +131,8 @@ public class PortfolioController extends AbstractController {
             stockdate.add(date);
             count++;
           } else {
-            throw new IllegalArgumentException("ERROR: Invalid 'Date' input, try adding " + "stock again.");
+            throw new IllegalArgumentException("ERROR: Invalid 'Date' input, try adding "
+                    + "stock again.");
           }
 
         } catch (InputMismatchException e) {
@@ -143,7 +145,9 @@ public class PortfolioController extends AbstractController {
       if (stockpercent.stream().reduce(0, Integer::sum) == 100) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < count; i++) {
-          result.append("For stock ").append(stocklist.get(i)).append(" ").append(portfolio.buyExistingPrice(i, stockdate.get(i), (float) (amount / 100) * stockpercent.get(i))).append("\n");
+          result.append("For stock ").append(stocklist.get(i)).append(" ")
+                  .append(portfolio.buyExistingPrice(i, stockdate.get(i),
+                          (float) (amount / 100) * stockpercent.get(i))).append("\n");
         }
         return String.valueOf(result);
       } else {
@@ -173,7 +177,8 @@ public class PortfolioController extends AbstractController {
       } else if (!portfolio.checkStartDate(startDate)) {
         return "Start date should start after all previous transaction end";
       }
-      view.displayMessage("Enter End Date for strategy\nEnter 0 to exit" + "\n Enter 1 to make strategy continuing");
+      view.displayMessage("Enter End Date for strategy\nEnter 0 to exit"
+              + "\n Enter 1 to make strategy continuing");
       String endDate = input.next();
       if ("0".equals(endDate)) {
         return "Going Back to main Menu";
@@ -216,7 +221,8 @@ public class PortfolioController extends AbstractController {
         strategy.saveStrategy(name);
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < count; i++) {
-          result.append("For stock ").append(stocklist.get(i)).append(" ").append(portfolio.buyExistingPrice(i, startDate, prices.get(i))).append("\n");
+          result.append("For stock ").append(stocklist.get(i)).append(" ")
+                  .append(portfolio.buyExistingPrice(i, startDate, prices.get(i))).append("\n");
         }
         return String.valueOf(result);
       } else {

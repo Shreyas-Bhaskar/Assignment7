@@ -1,6 +1,7 @@
 package model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Extends PortfolioInterface to provide advanced portfolio management capabilities. This interface
@@ -74,18 +75,26 @@ public interface FlexiblePortfolioInterface extends PortfolioInterface {
    * @param price    The price at which to buy the stock.
    * @return A String message indicating the result of the operation.
    * @throws Exception If there's an issue executing the buy operation, such as invalid date or
-   * insufficient funds.
+   *         insufficient funds.
    */
   String buyExistingPrice(int number, String date, float price) throws Exception;
 
   void useStrategy();
 
   /**
-   * Verifies whether the specified date matches or precedes the start date of the current investment strategy.
-   * This is important for ensuring that strategy actions are not applied retroactively beyond their intended scope.
+   * Verifies whether the specified date matches or precedes the start date of the current
+   * investment strategy.
+   * This is important for ensuring that strategy actions are not applied retroactively beyond their
+   * intended scope.
    *
    * @param date The date to check, in the format "yyyy-MM-dd".
-   * @return true if the date is valid within the context of the strategy's timeline, false otherwise.
+   * @return true if the date is valid within the context of the strategy's timeline,
+   *         false otherwise.
    */
   boolean checkStartDate(String date);
+
+  /**
+   * Rebalnce
+   */
+  void rebalance(String date, Map<String, Float> targetWeights) throws Exception;
 }

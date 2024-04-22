@@ -4,9 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,11 +58,11 @@ public class Portfolio implements PortfolioInterface {
       URLInterface url = new AlphaVantage("EEEYJNAZOVJWJ5PQ");
       StringBuilder sb = url.urlCall(symbol);
       if (sb.toString().contains("Error")) {
-        return "Update Unsuccessful for stock: " + symbol +
-                " - Incorrect Stock Symbol\r\n";
+        return "Update Unsuccessful for stock: " + symbol
+                + " - Incorrect Stock Symbol\r\n";
       } else if (sb.toString().contains("Information")) {
-        return "Update Unsuccessful for stock: " + symbol +
-                " - Exceeded number of API Calls, try again tomorrow\r\n";
+        return "Update Unsuccessful for stock: " + symbol
+                + " - Exceeded number of API Calls, try again tomorrow\r\n";
       } else {
         String path = System.getProperty("user.dir") + "/data/" + symbol + ".csv";
         File targetFile = new File(path);
@@ -74,8 +72,8 @@ public class Portfolio implements PortfolioInterface {
         }
       }
     } catch (Exception e) {
-      return "Update Unsuccessful for stock: " + symbol + " - Error: " +
-              e.getMessage() + "\r\n";
+      return "Update Unsuccessful for stock: " + symbol + " - Error: "
+              + e.getMessage() + "\r\n";
     }
   }
 

@@ -1,12 +1,21 @@
 package view;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 
 /**
  * This class represents the GUI view for managing individual stocks within a portfolio.
